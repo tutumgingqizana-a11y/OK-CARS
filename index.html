@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AutoVerse | Car Explorer</title>
+
+    <!-- Connect CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <header>
+        <a href="index.html" class="logo">
+            AUTO<span>VERSE</span>
+        </a>
+
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#cars">Explore Cars</a>
+            <a href="#about">About</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>DISCOVER THE WORLD OF
+                <span>PERFORMANCE CARS</span>
+            </h1>
+
+            <p>
+                Explore sports cars, supercars, SUVs,
+                off-road vehicles and sport hatchbacks.
+                Discover engine specifications, horsepower,
+                acceleration and maximum speed.
+            </p>
+
+            <a href="#cars" class="main-btn">
+                EXPLORE CARS
+            </a>
+        </div>
+    </section>
+
+    <!-- Statistics -->
+    <section class="stats">
+        <div>
+            <h2 id="totalCars">10</h2>
+            <p>Featured Cars</p>
+        </div>
+
+        <div>
+            <h2>5</h2>
+            <p>Car Categories</p>
+        </div>
+
+        <div>
+            <h2>350+</h2>
+            <p>KM/H Performance Range</p>
+        </div>
+
+        <div>
+            <h2>100%</h2>
+            <p>Car Passion</p>
+        </div>
+    </section>
+
+    <!-- Car Collection -->
+    <main class="container" id="cars">
+
+        <h2 class="section-title">EXPLORE OUR CARS</h2>
+
+        <p class="section-description">
+            Discover vehicle specifications and performance details.
+        </p>
+
+        <!-- Search -->
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search by car name or manufacturer..."
+        >
+
+        <!-- Category Buttons -->
+        <div class="filters">
+            <button class="filter-btn active" data-category="All">
+                All Cars
+            </button>
+
+            <button class="filter-btn" data-category="Sports Car">
+                Sports Cars
+            </button>
+
+            <button class="filter-btn" data-category="Supercar">
+                Supercars
+            </button>
+
+            <button class="filter-btn" data-category="SUV">
+                SUVs
+            </button>
+
+            <button class="filter-btn" data-category="Off-road">
+                Off-road Cars
+            </button>
+
+            <button class="filter-btn" data-category="Sport Hatchback">
+                Sport Hatchbacks
+            </button>
+        </div>
+
+        <!-- Vehicle Cards -->
+        <div class="car-grid" id="carGrid"></div>
+
+    </main>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+
+        <h2>ABOUT AUTOVERSE</h2>
+
+        <p>
+            AutoVerse is an automotive exploration platform
+            designed for car enthusiasts. Explore high-performance
+            vehicles, powerful engines, luxury SUVs and off-road
+            machines.
+        </p>
+
+        <p>
+            Learn about engine capacity, horsepower, torque,
+            transmission, drivetrain, acceleration and top speed.
+        </p>
+
+    </section>
+
+    <!-- Vehicle Details Popup -->
+    <div class="modal" id="carModal">
+
+        <div class="modal-content">
+
+            <button class="close-btn" id="closeModal">
+                &times;
+            </button>
+
+            <img id="modalImage" src="" alt="Car image">
+
+            <div class="modal-details" id="modalDetails"></div>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 AutoVerse | Automotive Explorer</p>
+        <p>Explore. Compare. Experience.</p>
+    </footer>
+
+    <!-- Connect JavaScript -->
+    <script src="js/script.js"></script>
+
+</body>
+</html>
