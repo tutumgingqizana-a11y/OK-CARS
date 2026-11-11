@@ -1,0 +1,841 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoVerse | Car Performance Explorer</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #0b0d12;
+    color: white;
+}
+
+header {
+    background: #11151e;
+    padding: 22px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    border-bottom: 1px solid #292e39;
+}
+
+.logo {
+    font-size: 27px;
+    font-weight: bold;
+    color: #ff3b30;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 14px;
+}
+
+nav a:hover {
+    color: #ff3b30;
+}
+
+.hero {
+    min-height: 440px;
+    padding: 100px 8%;
+    background:
+    linear-gradient(90deg,rgba(0,0,0,.9),rgba(0,0,0,.3)),
+    url("https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1600")
+    center/cover;
+    display: flex;
+    align-items: center;
+}
+
+.hero-content {
+    max-width: 650px;
+}
+
+.hero h1 {
+    font-size: clamp(38px, 6vw, 65px);
+    margin-bottom: 20px;
+}
+
+.hero h1 span {
+    color: #ff3b30;
+}
+
+.hero p {
+    color: #ddd;
+    font-size: 17px;
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+.hero button, .details-btn {
+    background: #ff3b30;
+    border: none;
+    color: white;
+    padding: 13px 23px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.hero button:hover, .details-btn:hover {
+    background: #d92520;
+}
+
+.section {
+    padding: 55px 6%;
+}
+
+.section-title {
+    font-size: 30px;
+    margin-bottom: 12px;
+}
+
+.subtitle {
+    color: #a9afbb;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.filters button {
+    background: #1b202b;
+    color: white;
+    border: 1px solid #363c49;
+    padding: 11px 17px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.filters button.active,
+.filters button:hover {
+    background: #ff3b30;
+    border-color: #ff3b30;
+}
+
+.search-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 13px;
+    background: #181d27;
+    border: 1px solid #3b4250;
+    color: white;
+    border-radius: 5px;
+    margin-bottom: 30px;
+}
+
+.car-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+    gap: 24px;
+}
+
+.car-card {
+    background: #151a23;
+    border: 1px solid #292f3b;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: .3s;
+}
+
+.car-card:hover {
+    transform: translateY(-7px);
+    border-color: #ff3b30;
+}
+
+.car-card img {
+    width: 100%;
+    height: 205px;
+    object-fit: cover;
+}
+
+.car-info {
+    padding: 20px;
+}
+
+.category {
+    color: #ff554b;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.car-info h3 {
+    font-size: 21px;
+    margin: 10px 0;
+}
+
+.car-info p {
+    color: #aeb4c0;
+    font-size: 14px;
+    margin-bottom: 14px;
+}
+
+.quick-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.quick-specs div {
+    background: #202632;
+    padding: 12px;
+    border-radius: 5px;
+}
+
+.quick-specs small {
+    display: block;
+    color: #a9afbb;
+    margin-bottom: 5px;
+}
+
+.quick-specs strong {
+    font-size: 14px;
+}
+
+.details-btn {
+    width: 100%;
+}
+
+.no-results {
+    color: #aaa;
+    padding: 25px;
+}
+
+.stats {
+    background: #151a23;
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+    gap: 20px;
+    padding: 35px 6%;
+    text-align: center;
+}
+
+.stat h2 {
+    color: #ff3b30;
+    font-size: 32px;
+}
+
+.stat p {
+    color: #aaa;
+    margin-top: 8px;
+}
+
+.about {
+    background: #11151e;
+    padding: 55px 8%;
+    line-height: 1.8;
+    color: #c4c9d2;
+}
+
+.about h2 {
+    color: white;
+    margin-bottom: 15px;
+}
+
+footer {
+    padding: 25px;
+    background: #080a0f;
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+}
+
+/* Car detail popup */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.88);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    z-index: 100;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: #151a23;
+    border: 1px solid #3b4250;
+    width: 100%;
+    max-width: 850px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    position: relative;
+}
+
+.modal-content img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.close {
+    position: absolute;
+    right: 15px;
+    top: 12px;
+    background: #ff3b30;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.spec-table td {
+    padding: 13px;
+    border-bottom: 1px solid #303744;
+}
+
+.spec-table td:first-child {
+    color: #ff655b;
+    width: 42%;
+}
+
+.description {
+    color: #c2c7d0;
+    line-height: 1.8;
+    margin-top: 15px;
+}
+
+@media(max-width:600px) {
+    header {
+        justify-content: center;
+    }
+    nav {
+        text-align: center;
+    }
+    nav a {
+        margin: 7px;
+        display: inline-block;
+    }
+    .hero {
+        padding: 65px 6%;
+    }
+    .modal-content img {
+        height: 200px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">AUTO<span style="color:white">VERSE</span></div>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#cars">Explore Cars</a>
+        <a href="#about">About</a>
+    </nav>
+</header>
+
+<section class="hero" id="home">
+    <div class="hero-content">
+        <h1>DISCOVER THE WORLD OF <span>PERFORMANCE CARS</span></h1>
+        <p>
+            Explore sports cars, supercars, luxury SUVs, off-road
+            vehicles and performance hatchbacks. Discover engine
+            technology, horsepower, acceleration and top speeds.
+        </p>
+        <button onclick="document.getElementById('cars').scrollIntoView({behavior:'smooth'})">
+            EXPLORE VEHICLES
+        </button>
+    </div>
+</section>
+
+<div class="stats">
+    <div class="stat">
+        <h2 id="totalCars">10</h2>
+        <p>Featured Vehicles</p>
+    </div>
+    <div class="stat">
+        <h2>5</h2>
+        <p>Car Categories</p>
+    </div>
+    <div class="stat">
+        <h2>350+</h2>
+        <p>KM/H Featured Top Speed</p>
+    </div>
+    <div class="stat">
+        <h2>100%</h2>
+        <p>Automotive Passion</p>
+    </div>
+</div>
+
+<section class="section" id="cars">
+    <h2 class="section-title">Explore Our Car Collection</h2>
+    <p class="subtitle">
+        Select a category or search for your favourite vehicle.
+        Open any vehicle to explore its complete specifications.
+    </p>
+
+    <div class="filters">
+        <button class="active" onclick="filterCars('All',this)">All Cars</button>
+        <button onclick="filterCars('Sports Car',this)">Sports Cars</button>
+        <button onclick="filterCars('Supercar',this)">Supercars</button>
+        <button onclick="filterCars('SUV',this)">SUVs</button>
+        <button onclick="filterCars('Off-road',this)">Off-road</button>
+        <button onclick="filterCars('Sport Hatchback',this)">Sport Hatchbacks</button>
+    </div>
+
+    <input
+        class="search-box"
+        id="search"
+        type="text"
+        placeholder="Search car name or manufacturer..."
+        oninput="renderCars()"
+    >
+
+    <div class="car-grid" id="carGrid"></div>
+</section>
+
+<section class="about" id="about">
+    <h2>About AutoVerse</h2>
+    <p>
+        AutoVerse is an automotive information platform created
+        for people who love performance, engineering, speed and
+        adventure. Our collection covers everything from
+        high-performance sports cars and exotic supercars to
+        powerful SUVs, rugged off-road vehicles and sporty
+        hatchbacks.
+    </p>
+    <br>
+    <p>
+        Explore detailed engine specifications, drivetrain
+        configurations, horsepower, torque, acceleration,
+        top-speed information and vehicle characteristics.
+    </p>
+</section>
+
+<footer>
+    <p>© 2026 AutoVerse | The Ultimate Automotive Explorer</p>
+    <p>Vehicle specifications are model and market dependent.</p>
+</footer>
+
+<!-- Detailed vehicle popup -->
+
+<div class="modal" id="carModal" onclick="outsideClose(event)">
+    <div class="modal-content">
+        <button class="close" onclick="closeModal()">×</button>
+        <img id="modalImage" src="" alt="Vehicle">
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+
+// VEHICLE DATABASE
+
+const cars = [
+
+{
+id:1,
+name:"Porsche 911 GT3",
+brand:"Porsche",
+category:"Sports Car",
+year:"2025",
+body:"2-door sports coupe",
+engine:"4.0L naturally aspirated flat-six",
+capacity:"3,996 cc",
+power:"502 hp",
+torque:"469 Nm",
+transmission:"6-speed manual / 7-speed PDK",
+drive:"Rear-wheel drive (RWD)",
+fuel:"Petrol",
+acceleration:"3.4 seconds",
+speed:"311 km/h",
+seats:"2",
+description:"The Porsche 911 GT3 is designed for drivers who enjoy precision handling and track performance. Its naturally aspirated flat-six engine delivers a high-revving driving experience. Its aerodynamic body, rear-wheel-drive layout and advanced suspension make it suitable for both road and circuit driving.",
+image:"https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1000"
+},
+
+{
+id:2,
+name:"Chevrolet Corvette Stingray",
+brand:"Chevrolet",
+category:"Sports Car",
+year:"2025",
+body:"2-door mid-engine coupe",
+engine:"6.2L naturally aspirated V8",
+capacity:"6,162 cc",
+power:"495 hp",
+torque:"637 Nm",
+transmission:"8-speed dual-clutch automatic",
+drive:"Rear-wheel drive (RWD)",
+fuel:"Petrol",
+acceleration:"Approximately 2.9 seconds",
+speed:"Approximately 312 km/h",
+seats:"2",
+description:"The Corvette Stingray uses a naturally aspirated V8 mounted behind the passenger compartment. Its mid-engine design provides balanced handling and impressive acceleration. It combines American V8 character with modern supercar-inspired styling.",
+image:"https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=1000"
+},
+
+{
+id:3,
+name:"Ferrari 296 GTB",
+brand:"Ferrari",
+category:"Supercar",
+year:"2025",
+body:"2-door mid-engine coupe",
+engine:"3.0L twin-turbocharged V6 hybrid",
+capacity:"2,992 cc",
+power:"830 CV combined",
+torque:"740 Nm",
+transmission:"8-speed dual-clutch automatic",
+drive:"Rear-wheel drive (RWD)",
+fuel:"Petrol / electric hybrid",
+acceleration:"2.9 seconds",
+speed:"330 km/h",
+seats:"2",
+description:"The Ferrari 296 GTB combines a twin-turbocharged V6 petrol engine with an electric motor. Its hybrid powertrain delivers exceptional acceleration, strong torque and high performance. Its aerodynamic body and advanced electronic systems support high-speed driving and cornering.",
+image:"https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1000"
+},
+
+{
+id:4,
+name:"Lamborghini Revuelto",
+brand:"Lamborghini",
+category:"Supercar",
+year:"2025",
+body:"2-door V12 super sports coupe",
+engine:"6.5L naturally aspirated V12 hybrid",
+capacity:"6,498 cc",
+power:"1,015 CV combined",
+torque:"725 Nm from V12 engine",
+transmission:"8-speed dual-clutch automatic",
+drive:"All-wheel drive (AWD)",
+fuel:"Petrol / electric hybrid",
+acceleration:"2.5 seconds",
+speed:"Over 350 km/h",
+seats:"2",
+description:"The Revuelto is Lamborghini's V12 plug-in hybrid supercar. It combines a naturally aspirated V12 with three electric motors. Its striking aerodynamic design, advanced hybrid system and all-wheel-drive capability provide extraordinary performance.",
+image:"https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?w=1000"
+},
+
+{
+id:5,
+name:"BMW X5 M Competition",
+brand:"BMW",
+category:"SUV",
+year:"2025",
+body:"5-door performance SUV",
+engine:"4.4L twin-turbocharged V8",
+capacity:"4,395 cc",
+power:"625 hp",
+torque:"750 Nm",
+transmission:"8-speed automatic",
+drive:"M xDrive all-wheel drive",
+fuel:"Petrol",
+acceleration:"3.9 seconds",
+speed:"250 km/h (290 km/h with optional package)",
+seats:"5",
+description:"The BMW X5 M Competition combines luxury SUV practicality with high-performance engineering. Its twin-turbo V8 provides powerful acceleration, while M xDrive improves traction. It offers a spacious interior, advanced technology and sporty handling.",
+image:"https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=1000"
+},
+
+{
+id:6,
+name:"Mercedes-AMG G 63",
+brand:"Mercedes-Benz",
+category:"SUV",
+year:"2025",
+body:"5-door luxury off-road SUV",
+engine:"4.0L twin-turbocharged V8",
+capacity:"3,982 cc",
+power:"585 hp",
+torque:"850 Nm",
+transmission:"9-speed automatic",
+drive:"All-wheel drive (4MATIC)",
+fuel:"Petrol",
+acceleration:"4.4 seconds",
+speed:"220 km/h",
+seats:"5",
+description:"The Mercedes-AMG G 63 is a luxury performance SUV with a powerful twin-turbo V8 engine. It combines the traditional G-Class design with modern technology, premium materials and serious off-road hardware. Its performance is equally impressive on paved roads.",
+image:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1000"
+},
+
+{
+id:7,
+name:"Ford Bronco",
+brand:"Ford",
+category:"Off-road",
+year:"2025",
+body:"2-door / 4-door off-road SUV",
+engine:"2.7L EcoBoost twin-turbo V6",
+capacity:"2,694 cc",
+power:"330 hp",
+torque:"563 Nm",
+transmission:"10-speed automatic",
+drive:"Advanced 4x4",
+fuel:"Petrol",
+acceleration:"Varies by configuration",
+speed:"Approximately 160 km/h (configuration dependent)",
+seats:"4 or 5",
+description:"The Ford Bronco is engineered for challenging terrain. Its four-wheel-drive system, available locking differentials, off-road driving modes and removable roof and doors make it suitable for adventure driving. It is designed to tackle sand, mud, rocks and uneven surfaces.",
+image:"https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=1000"
+},
+
+{
+id:8,
+name:"Toyota Land Cruiser 300",
+brand:"Toyota",
+category:"Off-road",
+year:"2025",
+body:"5-door full-size off-road SUV",
+engine:"3.3L twin-turbocharged V6 diesel",
+capacity:"3,346 cc",
+power:"309 hp",
+torque:"700 Nm",
+transmission:"10-speed automatic",
+drive:"Full-time 4WD",
+fuel:"Diesel",
+acceleration:"Approximately 8 seconds",
+speed:"Approximately 210 km/h",
+seats:"5 or 7, depending on configuration",
+description:"The Land Cruiser 300 is built for durability, long-distance journeys and demanding terrain. Its powerful diesel V6, full-time four-wheel drive and off-road assistance systems provide strong capability on difficult surfaces. It also offers a comfortable interior for everyday driving.",
+image:"https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=1000"
+},
+
+{
+id:9,
+name:"Volkswagen Golf R",
+brand:"Volkswagen",
+category:"Sport Hatchback",
+year:"2025",
+body:"5-door performance hatchback",
+engine:"2.0L turbocharged inline-four",
+capacity:"1,984 cc",
+power:"333 PS (market dependent)",
+torque:"420 Nm",
+transmission:"7-speed DSG automatic",
+drive:"4MOTION all-wheel drive",
+fuel:"Petrol",
+acceleration:"4.6 seconds",
+speed:"250 km/h (270 km/h with performance package)",
+seats:"5",
+description:"The Golf R combines everyday hatchback practicality with high-performance engineering. Its turbocharged four-cylinder engine delivers strong power, while its 4MOTION all-wheel-drive system improves grip. It offers a practical interior, modern technology and excellent road performance.",
+image:"https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=1000"
+},
+
+{
+id:10,
+name:"Honda Civic Type R",
+brand:"Honda",
+category:"Sport Hatchback",
+year:"2025",
+body:"5-door performance hatchback",
+engine:"2.0L turbocharged inline-four",
+capacity:"1,996 cc",
+power:"315 hp",
+torque:"420 Nm",
+transmission:"6-speed manual",
+drive:"Front-wheel drive (FWD)",
+fuel:"Petrol",
+acceleration:"Approximately 5.4 seconds",
+speed:"Approximately 275 km/h",
+seats:"4 or 5, depending on market",
+description:"The Civic Type R is a performance-focused hatchback developed for enthusiasts. Its turbocharged engine, manual gearbox, limited-slip differential and performance suspension deliver precise handling. It combines everyday usability with a strong track-focused character.",
+image:"https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=1000"
+}
+
+];
+
+// DISPLAY VEHICLES
+
+let currentCategory = "All";
+
+function renderCars() {
+
+    const grid = document.getElementById("carGrid");
+    const search = document.getElementById("search").value.toLowerCase();
+
+    const filtered = cars.filter(car => {
+        const categoryMatch =
+            currentCategory === "All" ||
+            car.category === currentCategory;
+
+        const searchMatch =
+            car.name.toLowerCase().includes(search) ||
+            car.brand.toLowerCase().includes(search) ||
+            car.category.toLowerCase().includes(search);
+
+        return categoryMatch && searchMatch;
+    });
+
+    grid.innerHTML = "";
+
+    if (filtered.length === 0) {
+        grid.innerHTML = '<p class="no-results">No vehicles found. Try another search.</p>';
+        return;
+    }
+
+    filtered.forEach(car => {
+
+        grid.innerHTML += `
+            <article class="car-card">
+                <img src="${car.image}"
+                     alt="${car.name}"
+                     loading="lazy"
+                     onerror="this.src='https://placehold.co/800x450/151a23/ffffff?text=Car+Image'">
+
+                <div class="car-info">
+                    <span class="category">${car.category}</span>
+                    <h3>${car.name}</h3>
+                    <p>${car.year} | ${car.body}</p>
+
+                    <div class="quick-specs">
+                        <div>
+                            <small>Engine</small>
+                            <strong>${car.capacity}</strong>
+                        </div>
+                        <div>
+                            <small>Power</small>
+                            <strong>${car.power}</strong>
+                        </div>
+                        <div>
+                            <small>0–100 km/h</small>
+                            <strong>${car.acceleration}</strong>
+                        </div>
+                        <div>
+                            <small>Top speed</small>
+                            <strong>${car.speed}</strong>
+                        </div>
+                    </div>
+
+                    <button class="details-btn"
+                        onclick="showDetails(${car.id})">
+                        VIEW FULL SPECIFICATIONS
+                    </button>
+                </div>
+            </article>
+        `;
+    });
+}
+
+// CATEGORY FILTER
+
+function filterCars(category, button) {
+    currentCategory = category;
+
+    document.querySelectorAll(".filters button").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    button.classList.add("active");
+    renderCars();
+}
+
+// OPEN FULL VEHICLE DETAILS
+
+function showDetails(id) {
+
+    const car = cars.find(item => item.id === id);
+
+    document.getElementById("modalImage").src = car.image;
+
+    document.getElementById("modalBody").innerHTML = `
+
+        <span class="category">${car.category}</span>
+        <h2 style="margin:10px 0">${car.name}</h2>
+        <p style="color:#aaa">${car.year} | ${car.brand}</p>
+
+        <h3 style="margin-top:25px">Complete Vehicle Specifications</h3>
+
+        <table class="spec-table">
+            <tr><td>Manufacturer</td><td>${car.brand}</td></tr>
+            <tr><td>Model year</td><td>${car.year}</td></tr>
+            <tr><td>Vehicle category</td><td>${car.category}</td></tr>
+            <tr><td>Body type</td><td>${car.body}</td></tr>
+            <tr><td>Engine</td><td>${car.engine}</td></tr>
+            <tr><td>Engine capacity</td><td>${car.capacity}</td></tr>
+            <tr><td>Maximum power</td><td>${car.power}</td></tr>
+            <tr><td>Maximum torque</td><td>${car.torque}</td></tr>
+            <tr><td>Transmission</td><td>${car.transmission}</td></tr>
+            <tr><td>Drivetrain</td><td>${car.drive}</td></tr>
+            <tr><td>Fuel type</td><td>${car.fuel}</td></tr>
+            <tr><td>Acceleration (0–100 km/h)</td><td>${car.acceleration}</td></tr>
+            <tr><td>Maximum speed</td><td>${car.speed}</td></tr>
+            <tr><td>Seating capacity</td><td>${car.seats}</td></tr>
+        </table>
+
+        <h3>Performance and Driving Description</h3>
+
+        <p class="description">${car.description}</p>
+
+        <p class="description">
+            <strong style="color:#ff554b">Top speed explanation:</strong>
+            The listed maximum speed is a claimed or approximate
+            vehicle speed, not a recommended road-driving speed.
+            Actual performance can vary depending on model year,
+            specification, tyres, road conditions and electronic
+            speed limiters.
+        </p>
+    `;
+
+    document.getElementById("carModal").classList.add("show");
+}
+
+// CLOSE DETAILS
+
+function closeModal() {
+    document.getElementById("carModal").classList.remove("show");
+}
+
+function outsideClose(event) {
+    if (event.target.id === "carModal") {
+        closeModal();
+    }
+}
+
+// KEYBOARD SUPPORT
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") {
+        closeModal();
+    }
+});
+
+// INITIALIZE APPLICATION
+
+document.getElementById("totalCars").textContent = cars.length;
+renderCars();
+
+</script>
+
+</body>
+</html>
